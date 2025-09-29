@@ -3,14 +3,15 @@ import { useCart } from "@/app/context/CartContext";
 import { useState, useEffect } from "react";
 import { FaHeart } from "react-icons/fa";
 import { MdAddShoppingCart } from "react-icons/md";
+import { Product } from "@/app/types/product";
 
 
-type Product = {
+/*type Product = {
   id: number;
   name: string;
   price: number;
   image_url: string | null;
-};
+};*/
 
 type ProductGalleryProps = {
   searchTerm: string;
@@ -98,6 +99,8 @@ export default function ProductCard({ searchTerm }: ProductGalleryProps) {
                         image_url: product.image_url
                           ? `${BACKEND}${product.image_url}`
                           : "/placeholder.png",
+                        is_featured: false,
+                        category: null
                       })
                     }
                     className="relative mt-4 w-full px-4 py-2 rounded-xl 

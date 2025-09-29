@@ -2,7 +2,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Category } from "@/app/type/categories";
+import { Category } from "@/app/types/categories";
 
 export default function CategoriesHighlight() {
   const [categories, setCategories] = useState<Category[]>([]);

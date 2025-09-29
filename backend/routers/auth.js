@@ -1,4 +1,4 @@
-// backend/routers/auth.js
+// backend/routers/authRoutes.js
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -75,12 +75,11 @@ router.post("/login", async (req, res) => {
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    });
+    }).json({ user: user, message: "Login realizado com sucesso." });
 
-    res.json({ user: { id: user.id, username: user.username, is_admin: user.is_admin } });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Erro no servidor" });
+    //res.status(500).json({ error: "Erro no servidor" });
   }
 });
 

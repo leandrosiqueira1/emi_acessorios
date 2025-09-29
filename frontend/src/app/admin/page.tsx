@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Category } from "@/app/type/categories";
-import { Product } from "@/app/type/product";
+import { Category } from "@/app/types/categories";
+import { Product } from "@/app/types/product";
 
 export default function AdminPage() {
   const [name, setName] = useState("");

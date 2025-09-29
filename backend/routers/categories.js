@@ -1,3 +1,4 @@
+//backend/routers/categories.js
 import { Router } from "express";
 import { pool } from "../db.js";
 import { verifyToken, requireAdmin } from "../middlewares/auth.js"; // Funções e caminho corrigidos

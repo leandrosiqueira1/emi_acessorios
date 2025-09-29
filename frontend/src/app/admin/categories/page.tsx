@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useRouter } from "next/navigation";
-import { Category } from "@/app/type/categories";
+import { Category } from "@/app/types/categories";
 import Link from "next/link";
 
 export default function AdminCategoriasPage() {

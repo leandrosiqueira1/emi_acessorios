@@ -1,9 +1,11 @@
+//frontend/src/app/context/CartContext.tsx
+
 "use client";
 
 import React, { createContext, useReducer, useContext, ReactNode, useEffect } from "react";
 import { cartReducer } from "./CartReducer";
 import { CartState, CartItem } from "./CartType";
-import { Product } from "@/app/type/product";
+import { Product } from "@/app/types/product";
 
 type CartContextType = {
   cart: CartItem[];

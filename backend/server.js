@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import path from "path";
 
+
 import authRoutes from "./routers/auth.js";
 import productsRoutes from "./routers/products.js";
 import categoriesRoutes from "./routers/categories.js"
