@@ -6,7 +6,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/app/context/CartContext";
-import { Product } from "@/app/types/product";
+import { Product } from "@/app/types/products";
 import { Heart } from "lucide-react";
 import { useFavorites } from "@/app/context/FavoritesContext";
 

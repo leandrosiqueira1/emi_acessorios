@@ -1,6 +1,6 @@
 //frontend/src/app/context/CartTypes.tsx
 
-import { Product } from "../types/product";
+import { Product } from "../types/products";
 
 export type CartItem = Product & { quantity: number };
 

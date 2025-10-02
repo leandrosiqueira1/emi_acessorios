@@ -1,4 +1,3 @@
-// backend/routers/authRoutes.js
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -70,11 +69,16 @@ router.post("/login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    // Ajuste CRÍTICO para desenvolvimento (HTTP)
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      // Se for produção, usa 'none' e secure: true. Se for dev (http), usa 'lax' e secure: false.
+      sameSite: isProduction ? "none" : "lax", 
+      secure: isProduction,
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 dias
+      path: "/"
     }).json({ user: user, message: "Login realizado com sucesso." });
 
   } catch (err) {

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useState, useEffect } from "react";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useRouter } from "next/navigation";
@@ -149,8 +149,12 @@ export default function AdminCategoriasPage() {
       <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Adicionar Nova Categoria</h2>
         <form onSubmit={handleAddCategory} className="flex flex-col md:flex-row gap-4">
+          {/* Adiciona um label para acessibilidade e conecta-o ao input */}
+          <label htmlFor="newCategoryName" className="sr-only">Nome da Categoria</label> 
           <input
             type="text"
+            id="newCategoryName" // 💡 Adicionado ID
+            name="newCategoryName" // 💡 Adicionado Name
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
             placeholder="Nome da Categoria"
@@ -209,8 +213,12 @@ export default function AdminCategoriasPage() {
           <div className="relative p-8 w-full max-w-md bg-white rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold mb-4">Editar Categoria</h3>
             <form onSubmit={handleEditCategory} className="flex flex-col gap-4">
-              <input
+               {/* Adiciona label, ID e Name para acessibilidade */}
+               <label htmlFor="editCategoryName" className="sr-only">Nome da Categoria</label>
+               <input
                 type="text"
+                id="editCategoryName" // 💡 Adicionado ID
+                name="editCategoryName" // 💡 Adicionado Name
                 value={editingCategory.name}
                 onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
                 placeholder="Nome da Categoria"

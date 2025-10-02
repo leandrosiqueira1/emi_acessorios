@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Product } from "@/app/types/product";
+import { Product } from "@/app/types/products";
 
 // Novo Tipo: Agora o hook aceita um número (category ID) ou as strings de tipo especial.
 type ProductListType = "all" | "featured" | "new_arrivals" | number | null; 

@@ -29,6 +29,7 @@ export default function LoginPage() {
         } else {
           router.push("/");
         }
+        router.refresh()//novo
       } else {
         setMessage(data.error || "Erro ao fazer login.");
       }

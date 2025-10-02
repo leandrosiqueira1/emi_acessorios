@@ -1,6 +1,6 @@
 //frontend/src/app/hooks/useCategories.tsx
 import { useState, useEffect } from "react";
-import { Product } from "@/app/types/product";
+import { Product } from "@/app/types/products";
 
 
 // Hook personalizado para buscar produtos, evitando duplicacao de codigo

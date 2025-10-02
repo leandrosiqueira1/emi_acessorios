@@ -7,6 +7,9 @@ dotenv.config();
 
 // Middleware para verificar o token JWT do cookie
 export const verifyToken = (req, res, next) => {
+  
+  console.log("Cookies recebidos:", req.cookies);
+
   const token = req.cookies.token;
   if (!token) {
     return res.status(401).json({ error: "Não autorizado" });
@@ -17,6 +20,7 @@ export const verifyToken = (req, res, next) => {
     req.user = decoded; // Adiciona as informações do usuário à requisição
     next();
   } catch (err) {
+     console.error("ERRO na verificação do token:", err.message); 
     return res.status(401).json({ error: "Token inválido" });
   }
 };

@@ -1,9 +1,9 @@
-//frontend/src/app/context/FavoritesContext.tsx
+//frontend/src/app/context/FavoritesContext.ts
 
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { Product } from "../types/product";
+import { Product } from "../types/products";
 
 // Define a forma do contexto
 interface FavoritesContextType {

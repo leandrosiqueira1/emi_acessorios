@@ -4,21 +4,24 @@ import { Menu, X } from "lucide-react";
 import { useCart } from "@/app/context/CartContext";
 import CartModal from "./CartModal";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation"; // Importa usePathname
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // NOVO: Estado para verificar se é Admin
   const [username, setUsername] = useState("");
 
   const router = useRouter();
+  const pathname = usePathname(); // 💡 Captura a rota atual para forçar a atualização
   const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
   const { cart } = useCart();
   const totalItems = cart.reduce((acc, i) => acc + i.quantity, 0);
 
+  // Função para verificar o status de login (Lógica atualizada para incluir isAdmin)
   const checkLoginStatus = async () => {
     try {
       const res = await fetch(`${BACKEND}/auth/check`, {
@@ -29,16 +32,25 @@ export default function Navbar() {
         const data = await res.json();
         setIsLoggedIn(true);
         setUsername(data.user.username);
+        
+        // Lógica para definir isAdmin com base nos dados do backend (role e is_admin)
+        const userRole = data.user.role || 'user';
+        const userIsAdmin = data.user.is_admin === true;
+        setIsAdmin(userRole === 'admin' && userIsAdmin);
+        
       } else {
         setIsLoggedIn(false);
+        setIsAdmin(false); // Garante que isAdmin seja false ao deslogar
         setUsername("");
       }
     } catch {
       setIsLoggedIn(false);
+      setIsAdmin(false); // Garante que isAdmin seja false em caso de erro
       setUsername("");
     }
   };
 
+  // Função para lidar com o logout
   const handleLogout = async () => {
     try {
       const res = await fetch(`${BACKEND}/auth/logout`, {
@@ -47,14 +59,17 @@ export default function Navbar() {
       });
       if (res.ok) {
         setIsLoggedIn(false);
+        setIsAdmin(false); // Garante que isAdmin seja resetado no logout
         setUsername("");
         router.push("/");
+        router.refresh(); // Força a atualização após logout
       }
     } catch (err) {
       console.error("Erro ao fazer logout", err);
     }
   };
 
+  // 💡 Efeito que roda na montagem e sempre que a rota muda (pós-login)
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -62,19 +77,29 @@ export default function Navbar() {
     };
     window.addEventListener("resize", handleResize);
     handleResize();
-    checkLoginStatus();
+    
+    // Chama a verificação de login sempre que o pathname muda
+    checkLoginStatus(); 
+
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [pathname]); // Dependência do pathname
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  // Aqui defina as rotas reais do seu app
-  const menuItems = [
+  // Rotas base de navegação
+  const baseMenuItems = [
     { name: "Início", path: "/" },
     { name: "Loja", path: "/loja" },
     { name: "Sobre", path: "/sobre" },
     { name: "Contato", path: "/contato" },
   ];
+
+  // Adiciona o link "Admin" se o usuário for administrador
+  const menuItems = [
+    ...baseMenuItems,
+    ...(isAdmin ? [{ name: 'Admin', path: '/admin' }] : []),
+  ];
+
 
   return (
     <header className="w-full bg-white shadow-md fixed top-0 left-0 right-0 z-50">
@@ -139,7 +164,7 @@ export default function Navbar() {
         {/* AÇÕES DESKTOP */}
         <div className="hidden lg:flex items-center gap-4 ml-auto">
           {isLoggedIn && (
-            <span className="text-sm font-semibold text-gray-700">Olá, {username}!</span>
+            <span className="text-sm font-semibold text-gray-700">Olá, {username}! {isAdmin && "(Admin)"}</span>
           )}
 
           {isLoggedIn ? (
@@ -200,7 +225,7 @@ export default function Navbar() {
               ❤️ Favoritos
             </Link>
             {isLoggedIn && (
-              <span className="text-center font-bold text-gray-700">Olá, {username}!</span>
+              <span className="text-center font-bold text-gray-700">Olá, {username}! {isAdmin && "(Admin)"}</span>
             )}
           </div>
         </div>
