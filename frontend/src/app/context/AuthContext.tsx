@@ -1,13 +1,8 @@
 'use client';
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import {User} from "@/app/types/use"
 // import { useRouter } from 'next/navigation'; // Removido para resolver o erro de compilação
 
-// --- Tipagem ---
-interface User {
-  id: number;
-  username: string;
-  is_admin: boolean; // Usado para gerenciar acesso Admin
-}
 
 interface AuthContextType {
   user: User | null;

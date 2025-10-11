@@ -1,14 +1,13 @@
-
 "use client";
 
 import { useState } from "react";
-import Navbar from "@/componentes/Navbar";
-import ProductGallery from "@/componentes/ProductCard";
-import Carousel from "@/componentes/Carousel";
-import BannerInformation from "@/componentes/BannerInformation";
-import Footer from "@/componentes/Footer";
-import SearchBar from "@/componentes/SearchBar";
-import CategoriesHighlight from "@/componentes/CategoriesHighlight"; // Importe o componente de destaque de categorias
+import Navbar from "@/components/Navbar";
+import ProductGallery from "@/components/ProductCard";
+import Carousel from "@/components/Carousel";
+import BannerInformation from "@/components/BannerInformation";
+import Footer from "@/components/Footer";
+import SearchBar from "@/components/SearchBar";
+import CategoriesHighlight from "@/components/CategoriesHighlight"; // Importe o componente de destaque de categorias
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");

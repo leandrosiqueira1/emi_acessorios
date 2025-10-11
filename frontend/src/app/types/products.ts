@@ -1,8 +1,10 @@
+import { Category } from "./categories";
 // frontend/src/app/types/products.ts
-export interface Category {
-id: number;
-name: string;
-}
+//export interface Category {
+//id: number;
+//name: string;
+//}
+
 
 export type Product {
 id: number;

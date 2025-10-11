@@ -6,8 +6,8 @@ import "./globals.css";
 
 import { CartProvider } from "@/app/context/CartContext";
 import { FavoritesProvider } from "@/app/context/FavoritesContext"; // Importação adicionada
-import Footer from "@/componentes/Footer";
-import Navbar from "@/componentes/Navbar";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
 variable: "--font-geist-sans",

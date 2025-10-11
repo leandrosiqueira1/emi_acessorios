@@ -1,29 +1,29 @@
 // backend/config/cloudinary.js
-import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import multer from 'multer';
-import 'dotenv/config'; // Usando 'dotenv/config' para ES Modules
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import multer from "multer";
+import dotenv from "dotenv";
 
-// 1. Configura o Cloudinary com as variáveis de ambiente
+dotenv.config();
+
+// Configuração do Cloudinary
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
-    secure: true // Sempre use HTTPS
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// 2. Define o storage do Multer
+// Storage do Multer para Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'mini-querida-lacos', // O nome da pasta que usamos na função extractPublicId
-    allowed_formats: ['jpeg', 'png', 'jpg'],
-    // public_id: (req, file) => 'custom_id_prefix_' + Date.now(), // opcional
+    folder: "mini-querida-lacos", // pasta no Cloudinary
+    allowed_formats: ["jpg", "jpeg", "png", "webp"], // formatos permitidos
+    transformation: [{ width: 800, height: 800, crop: "limit" }], // redimensiona se necessário
   },
 });
 
-// 3. Cria o middleware de upload
-const upload = multer({ storage: storage });
+// Upload via Multer
+const upload = multer({ storage });
 
-// 4. Exporta para ser usado na rota
-export { upload, cloudinary };
+export { cloudinary, upload };

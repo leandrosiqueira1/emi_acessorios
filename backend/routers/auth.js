@@ -1,9 +1,11 @@
+// backend/routers/auth
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { pool } from "../db.js";
 import { verifyToken } from "../middlewares/auth.js";
+
 
 dotenv.config();
 
@@ -18,17 +20,17 @@ router.get("/check", verifyToken, (req, res) => {
 router.post("/register", async (req, res) => {
   try {
     const { username, password, is_admin } = req.body;
+    //const hashedPassword = await bcrypt.hash(password,10);
+
     if (!username || !password) {
       return res.status(400).json({ error: "username e password obrigatórios" });
     }
 
-    const { rows: cnt } = await pool.query("SELECT COUNT(*) FROM users");
+    const { rows: cnt } = await pool.query("SELECT COUNT (*) FROM users");
     const count = parseInt(cnt[0].count, 10);
 
     if (count > 0 && process.env.ALLOW_REGISTER !== "true") {
-      return res
-        .status(403)
-        .json({ error: "Registro desabilitado. Primeiro usuário já existe." });
+      return res.status(403).json({ error: "Registro desabilitado. Primeiro usuário já existe." });
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -57,11 +59,17 @@ router.post("/login", async (req, res) => {
       "SELECT id, username, password_hash, is_admin FROM users WHERE username = $1",
       [username]
     );
-    const user = rows[0];
-    if (!user) return res.status(401).json({ error: "Usuário ou senha inválidos" });
+    if (rows.length === 0){
+      return res.status(401).json({error:"Usuario não envontrado"})
+    } 
 
-    const match = await bcrypt.compare(password, user.password_hash);
-    if (!match) return res.status(401).json({ error: "Usuário ou senha inválidos" });
+    const user = rows[0];
+    const isValidPassword = await bcrypt.compare(password,user.password_hash)
+
+    if (!isValidPassword) return res.status(401).json({ error: "Usuário ou senha inválidos" });
+
+    //const match = await bcrypt.compare(password, user.password_hash);
+    //if (!match) return res.status(401).json({ error: "Usuário ou senha inválidos" });
 
     const token = jwt.sign(
       { id: user.id, username: user.username, is_admin: user.is_admin },
@@ -76,7 +84,7 @@ router.post("/login", async (req, res) => {
       httpOnly: true,
       // Se for produção, usa 'none' e secure: true. Se for dev (http), usa 'lax' e secure: false.
       sameSite: isProduction ? "none" : "lax", 
-      secure: isProduction,
+      //secure: isProduction, //descomentar quando for subir
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 dias
       path: "/"
     }).json({ user: user, message: "Login realizado com sucesso." });
