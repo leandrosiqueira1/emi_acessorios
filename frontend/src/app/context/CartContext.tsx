@@ -1,58 +1,70 @@
-
-//frontend/src/app/context/CartContext.tsx
-
 "use client";
-
-import React, { createContext, useReducer, useContext, ReactNode, useEffect } from "react";
-import { cartReducer } from "./CartReducer";
-import { CartState, CartItem } from "./CartType";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { Product } from "@/app/types/products";
 
+type CartProduct = Omit<Product, "is_featured" | "category"> & { quantity: number };
+
 type CartContextType = {
-cart: CartItem[];
-addToCart: (product: Product) => void;
-removeFromCart: (id: number) => void;
-increaseQty: (id: number) => void;
-decreaseQty: (id: number) => void;
-clearCart: () => void;
+  cart: CartProduct[];
+  addToCart: (product: CartProduct) => void;
+  removeFromCart: (id: number) => void;
+  increaseQty: (id: number) => void;
+  decreaseQty: (id: number) => void;
+  clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
-const initialState: CartState = { cart: [] };
-
-function init(): CartState {
-try {
-const raw = typeof window !== "undefined" ? localStorage.getItem("cart") : null;
-return raw ? { cart: JSON.parse(raw) } : initialState;
-} catch {
-return initialState;
-}
-}
 
 export function CartProvider({ children }: { children: ReactNode }) {
-const [state, dispatch] = useReducer(cartReducer, initialState, init);
+  const [cart, setCart] = useState<CartProduct[]>([]);
 
-useEffect(() => {
-try {
-localStorage.setItem("cart", JSON.stringify(state.cart));
-} catch {}
-}, [state.cart]);
+  const addToCart = (product: CartProduct) => {
+    setCart((prev) => {
+      const existing = prev.find((p) => p.id === product.id);
+      if (existing) {
+        return prev.map((p) =>
+          p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+  };
 
-const addToCart = (product: Product) => dispatch({ type: "ADD_TO_CART", payload: product });
-const removeFromCart = (id: number) => dispatch({ type: "REMOVE_FROM_CART", payload: id });
-const increaseQty = (id: number) => dispatch({ type: "INCREASE_QTY", payload: id });
-const decreaseQty = (id: number) => dispatch({ type: "DECREASE_QTY", payload: id });
-const clearCart = () => dispatch({ type: "CLEAR_CART" });
+  const removeFromCart = (id: number) => {
+    setCart((prev) => prev.filter((p) => p.id !== id));
+  };
 
-return (
-<CartContext.Provider value={{ cart: state.cart, addToCart, removeFromCart, increaseQty, decreaseQty, clearCart }}>
-{children}
-</CartContext.Provider>
-);
+  const increaseQty = (id: number) => {
+    setCart((prev) =>
+      prev.map((p) =>
+        p.id === id ? { ...p, quantity: p.quantity + 1 } : p
+      )
+    );
+  };
+
+  const decreaseQty = (id: number) => {
+    setCart((prev) =>
+      prev
+        .map((p) =>
+          p.id === id ? { ...p, quantity: p.quantity - 1 } : p
+        )
+        .filter((p) => p.quantity > 0)
+    );
+  };
+
+  const clearCart = () => setCart([]);
+
+  return (
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, increaseQty, decreaseQty, clearCart }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 }
 
 export function useCart() {
-const ctx = useContext(CartContext);
-if (!ctx) throw new Error("useCart deve ser usado dentro de CartProvider");
-return ctx;
+  const context = useContext(CartContext);
+  if (!context) throw new Error("useCart deve ser usado dentro de <CartProvider>");
+  return context;
 }
