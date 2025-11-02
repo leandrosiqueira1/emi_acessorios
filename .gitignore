@@ -12,6 +12,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Env
+# environment files
 .env
 backend/.env
 
@@ -24,3 +25,12 @@ backend/.env
 # Misc
 coverage/
 *.local
+
+# logs
+*.log
+backend-dev.log
+
+# editor
+.vscode/
+.idea/
+.DS_Store
