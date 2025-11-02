@@ -1,4 +1,4 @@
-//Navbar.tsx
+//frontend/src/app/components/Navbar.tsx
 'use client';
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
@@ -6,6 +6,7 @@ import { useCart } from "@/app/context/CartContext";
 import CartModal from "./CartModal";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation"; // Importa usePathname
+import PromotionBanner from "./PromotionBanner";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -91,7 +92,7 @@ export default function Navbar() {
   const baseMenuItems = [
     { name: "Início", path: "/" },
     { name: "Loja", path: "/loja" },
-    { name: "Sobre", path: "/sobre" },
+    { name: "Sobre", path: "/about" },
     { name: "Contato", path: "/contato" },
   ];
 
@@ -104,6 +105,7 @@ export default function Navbar() {
 
   return (
     <header className="w-full bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+      <PromotionBanner endDate="2025-10-20T23:59:59" />
       <div className="mx-auto px-4 py-3 flex flex-wrap items-center justify-between lg:flex-nowrap lg:justify-start lg:gap-8">
         {/* LOGO */}
         <div className="flex items-center justify-between w-full lg:w-auto">

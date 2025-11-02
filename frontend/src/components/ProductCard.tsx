@@ -1,3 +1,4 @@
+//frontend/src/app/components/ProductCard.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { useCart } from "@/app/context/CartContext";
@@ -67,15 +68,21 @@ export default function ProductCard({ searchTerm }: ProductGalleryProps) {
                 key={product.id}
                 className="relative border border-gray-300 rounded-2xl overflow-hidden
                            bg-gray-100 shadow-lg transition-transform duration-300
-                           hover:scale-105 hover:shadow-2xl"
+                           hover:scale-105 hover:shadow-2xl cursor-pointer"
+                onClick={() => (window.location.href = `/products/${product.id}`)}
               >
+                {/* Botão de Favorito */}
                 <button
-                  onClick={() => toggleFavorite(product.id)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // evita redirecionamento
+                    toggleFavorite(product.id);
+                  }}
                   className="absolute top-3 right-3 z-10 text-xl"
                 >
                   <HeartIcon isFavorite={favorites.includes(product.id)} />
                 </button>
 
+                {/* Imagem */}
                 <div className="w-full h-[360px] overflow-hidden">
                   <img
                     src={
@@ -95,14 +102,19 @@ export default function ProductCard({ searchTerm }: ProductGalleryProps) {
                   />
                 </div>
 
+                {/* Conteúdo */}
                 <div className="p-5">
-                  <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
+                  <h3 className="text-lg font-bold text-gray-800 truncate">
+                    {product.name}
+                  </h3>
                   <p className="text-gray-700 mt-1 font-semibold text-lg">
-                    R$ {product.price}
+                    R$ {product.price.toFixed(2)}
                   </p>
 
+                  {/* Botão Adicionar ao Carrinho */}
                   <button
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation(); // impede redirecionar
                       addToCart({
                         id: product.id,
                         name: product.name,
@@ -111,10 +123,10 @@ export default function ProductCard({ searchTerm }: ProductGalleryProps) {
                           product.image_url?.startsWith("/")
                             ? `${BACKEND}${product.image_url}`
                             : product.image_url || PLACEHOLDER_URL,
-                      })
-                    }
+                      });
+                    }}
                     className="relative mt-4 w-full px-4 py-2 rounded-xl 
-                               bg-gradient-to-tr from-[#64f5ca] via-[#ffa9df] to-[#FFD700] 
+                               bg-gradient-to-tr from-[#64F5CA] via-[#FFA9DF] to-[#F5ED88] 
                                text-black font-bold shadow-lg overflow-hidden 
                                hover:scale-105 transition-transform flex items-center justify-center gap-2"
                   >

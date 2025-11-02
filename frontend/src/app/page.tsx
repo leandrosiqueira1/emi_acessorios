@@ -1,3 +1,4 @@
+//frontend/src/app/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -9,11 +10,13 @@ import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
 import CategoriesHighlight from "@/components/CategoriesHighlight"; // Importe o componente de destaque de categorias
 
+
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
     <>
+     
       <Navbar />
       <Carousel />
       <BannerInformation />

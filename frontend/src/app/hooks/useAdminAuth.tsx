@@ -1,46 +1,45 @@
-//frontend/src/app/hooks/useAdminAuth.tsx
-
+// frontend/src/app/hooks/useAdminAuth.tsx
 "use client";
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/hooks/useAdminAuth"; // Importa o hook de autenticação principal
+import { useAuth } from "@/app/context/AuthContext"; // 💡 CORRIGIDO: Importa do Contexto centralizado 
 
 /**
-* Hook para garantir que apenas usuários administradores possam acessar a página.
-* Se o usuário não for admin ou não estiver logado, ele é redirecionado.
-* @returns {boolean} Retorna true se o usuário for um admin e estiver carregando.
-*/
+ * Hook para garantir que apenas usuários administradores possam acessar a página.
+ * Redireciona se o usuário não for admin ou se o status de autenticação não puder ser checado.
+ */
 export const useAdminAuth = (): { isLoading: boolean } => {
-const { user, isLoading, isLoggedIn } = useAuth();
-const router = useRouter();
+    // Assume que AuthContext.tsx fornece isLoggedIn e isAdmin
+    const { isLoggedIn, isAdmin } = useAuth(); 
+    const [authChecked, setAuthChecked] = useState(false);
+    const router = useRouter();
 
-useEffect(() => {
-// Só executa a verificação se o carregamento inicial (isLoading) tiver terminado.
-if (!isLoading) {
-// 1. Se não estiver logado, redireciona para a página de login.
-if (!isLoggedIn) {
-console.log("Usuário não logado. Redirecionando para login.");
-router.push("/login");
-return;
-}
+    useEffect(() => {
+        // Se isLoggedIn é 'undefined', o AuthProvider ainda está carregando ou checando a sessão.
+        if (isLoggedIn === undefined) return; 
 
-// 2. Se estiver logado, mas não for admin, redireciona para a página inicial (ou mostra erro).
-// 'user' nunca será null aqui se isLoggedIn for true.
-if (user && !user.is_admin) {
-console.log("Usuário não é administrador. Redirecionando para home.");
-// Você pode mostrar uma mensagem de erro antes de redirecionar, se quiser.
-router.push("/");
-return;
-}
+        if (!isLoggedIn) {
+            // Se não está logado, envia para o login geral ou admin login (a rota /admin/login fará a checagem)
+            router.push("/admin/login"); 
+            return;
+        }
 
-// 3. Se for admin, a execução do componente continua normalmente.
-console.log("Acesso de administrador concedido.");
-}
-}, [isLoading, isLoggedIn, user, router]);
+        if (isLoggedIn &&!isAdmin) {
+            // Logado, mas não é admin, redireciona para a home
+            router.push("/");
+            return;
+        }
 
-// Enquanto estiver carregando, retornamos o estado para que o componente possa renderizar um Spinner ou tela de carregamento
-return { isLoading };
+        if (isLoggedIn && isAdmin) {
+             // Autenticação e autorização OK
+        }
+        
+        // Marca que a checagem inicial foi concluída
+        setAuthChecked(true); 
+        
+    }, [isLoggedIn, isAdmin, router]);
+
+    // Retorna o estado de carregamento para o componente pai
+    return { isLoading:!authChecked };
 };
-export { useAuth };
-
+// ⚠️ Ação de Limpeza: O arquivo `frontend/src/app/hooks/useAuth.tsx` deve ser deletado.

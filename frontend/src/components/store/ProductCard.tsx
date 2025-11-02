@@ -10,6 +10,7 @@ import { Product } from "@/app/types/products";
 import { Heart } from "lucide-react";
 import { useFavorites } from "@/app/context/FavoritesContext";
 
+
 interface ProductCardProps {
 product: Product;
 }
