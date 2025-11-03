@@ -338,7 +338,7 @@ Ações
 <tbody>
 {products.map((product) => {
 const category = categories.find(
-(cat) => cat.id === product.category_id
+	(cat) => cat.id === product.category?.id
 );
 return (
 <tr

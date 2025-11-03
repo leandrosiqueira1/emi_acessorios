@@ -116,14 +116,18 @@ export default function ProductCard({ searchTerm }: ProductGalleryProps) {
                     onClick={(e) => {
                       e.stopPropagation(); // impede redirecionar
                       addToCart({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image_url:
-                          product.image_url?.startsWith("/")
-                            ? `${BACKEND}${product.image_url}`
-                            : product.image_url || PLACEHOLDER_URL,
-                      });
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image_url:
+                            product.image_url?.startsWith("/")
+                              ? `${BACKEND}${product.image_url}`
+                              : product.image_url || PLACEHOLDER_URL,
+                          weight_kg: product.weight_kg ?? 0,
+                          length_cm: product.length_cm ?? 0,
+                          height_cm: product.height_cm ?? 0,
+                          width_cm: product.width_cm ?? 0,
+                        });
                     }}
                     className="relative mt-4 w-full px-4 py-2 rounded-xl 
                                bg-gradient-to-tr from-[#64F5CA] via-[#FFA9DF] to-[#F5ED88] 

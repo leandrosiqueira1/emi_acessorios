@@ -40,16 +40,22 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
+            id="registerUsername"
+            name="username"
             placeholder="Nome de usuário"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
           <input
             type="password"
+            id="registerPassword"
+            name="password"
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
           <button

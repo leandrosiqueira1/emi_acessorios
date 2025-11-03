@@ -90,10 +90,13 @@ export default function ProductShippingCalculator({
       <div className="flex gap-2 mb-3">
         <input
           type="text"
+          id="checkoutCep"
+          name="checkoutCep"
           value={cep}
           onChange={(e) => setCep(formatCep(e.target.value))}
           placeholder="Digite seu CEP"
           maxLength={9}
+          autoComplete="postal-code"
           className="flex-1 p-2 border rounded"
         />
         <button

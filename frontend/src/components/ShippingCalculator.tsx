@@ -14,8 +14,8 @@ interface ProductShippingCalculatorProps {
   quantity: number;
 }
 
-// ✅ Ajustado para compatibilidade com backend
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000/api';
+// ✅ Ajustado para compatibilidade com backend (sem `/api` para coincidir com as rotas do servidor)
+const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
 
 export default function ProductShippingCalculator({
   productId,
@@ -51,17 +51,20 @@ export default function ProductShippingCalculator({
     setError(null);
 
     try {
-      // ✅ Envia no formato que o backend espera
+      // ✅ Envia no formato que o backend espera (destinationCep, subtotal, items)
       const res = await fetch(`${BACKEND}/shipping/calculate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          cepDestino: cep,
-          peso: 0.5,
-          comprimento: 20,
-          altura: 10,
-          largura: 15,
-          total: currentSubtotal,
+          destinationCep: cep,
+          subtotal: currentSubtotal,
+          // items com peso/quantidade ajudam o backend a calcular peso total, se disponível
+          items: [
+            {
+              weight_kg: 0.5,
+              quantity: quantity,
+            },
+          ],
         }),
       });
 
@@ -95,10 +98,13 @@ export default function ProductShippingCalculator({
       <div className="flex gap-2">
         <input
           type="text"
+          id="destinationCep"
+          name="destinationCep"
           placeholder="CEP de Destino"
           value={cep}
           onChange={handleCepChange}
           maxLength={8}
+          autoComplete="postal-code"
           className="border border-gray-300 rounded-lg px-3 py-2 w-full text-sm focus:ring-blue-500 focus:border-blue-500 transition"
         />
         <button
@@ -147,6 +153,18 @@ export default function ProductShippingCalculator({
               </span>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Caixa de debug: exibe o array de fretes calculados em texto formatado */}
+      {shippingOptions.length > 0 && (
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Fretes calculados:</label>
+          <textarea
+            readOnly
+            value={JSON.stringify(shippingOptions, null, 2)}
+            className="w-full h-40 p-2 border rounded bg-gray-50 font-mono text-sm whitespace-pre overflow-auto"
+          />
         </div>
       )}
     </div>

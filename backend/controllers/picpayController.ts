@@ -1,13 +1,13 @@
 // backend/controllers/picpayController.js
 
 import { pool as db } from '../db.ts';
-
 // **IMPORTANTE:** Este token deve ser a mesma chave secreta que o PicPay usa para autenticar o callback.
 const PICPAY_TOKEN = process.env.PICPAY_TOKEN; 
 
 /**
  * Lida com o webhook de notificação do PicPay.
  */
+
 export const handlePicPayCallback = async (req, res) => {
     // referenceId = orderId (enviado na requisição de criação do pedido)
     const { referenceId, status } = req.body;

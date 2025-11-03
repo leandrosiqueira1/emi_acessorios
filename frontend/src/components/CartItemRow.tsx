@@ -20,7 +20,7 @@ export default function CartItemRow({ item }: Props) {
 
   return (
     <div className="flex items-center gap-3 border rounded p-2">
-      <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+      <img src={item.image_url || "/placeholder.png"} alt={item.name} className="w-16 h-16 object-cover rounded" />
       <div className="flex-1">
         <div className="font-medium">{item.name}</div>
         <div className="text-sm text-gray-600">{fmt.format(unit)}</div>

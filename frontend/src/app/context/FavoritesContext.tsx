@@ -6,7 +6,7 @@ import { Product } from "../types/products";
 
 // Define a forma do contexto
 interface FavoritesContextType {
-    favorites: Product;
+    favorites: Product[];
     toggleFavorite: (productId: number) => Promise<void>;
     // Recebe apenas o ID do produto
     isFavorite: (productId: number) => boolean;
@@ -22,8 +22,8 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:400
 
 // Provedor do contexto
 export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
-    // Agora 'favorites' armazena apenas a lista de produtos (objeto Product)
-    const [favorites, setFavorites] = useState<Product>();
+    // Agora 'favorites' armazena apenas a lista de produtos
+    const [favorites, setFavorites] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -42,7 +42,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
 
             if (res.status === 401 || res.status === 403) {
                 // Sessão expirada ou não logado. Comportamento esperado.
-                setFavorites(); 
+                setFavorites([]);
                 setLoading(false);
                 return;
             }
@@ -52,15 +52,15 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
                 throw new Error('Falha ao carregar favoritos da API. Tente logar novamente.');
             }
             const data = await res.json();
-            setFavorites(data);
+            setFavorites(data || []);
         } catch (err: any) {
             console.error('Erro ao buscar favoritos:', err);
             setError(err.message || 'Erro de conexão ou servidor.');
-            setFavorites();
+            setFavorites([]);
         } finally {
             setLoading(false);
         }
-    },);
+    }, []);
 
     // Carrega favoritos ao iniciar e sempre que houver login/logout
     useEffect(() => {
@@ -82,10 +82,10 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
             });
             const result = await res.json();
             
-            if (res.status === 401) {
-                 setError("Sessão expirada. Por favor, faça login novamente.");
-                 return;
-            }
+          if (res.status === 401) {
+              setError("Sessão expirada. Por favor, faça login novamente.");
+              return;
+          }
 
             if (!res.ok) {
                 throw new Error(result.error || 'Falha ao alterar o favorito.');
@@ -96,7 +96,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
                 // Requisita a lista completa (mais seguro do que tentar construir o objeto Product)
                 fetchFavorites();
             } else if (result.action === 'removed') {
-                setFavorites(prev => prev.filter(p => p.id!== productId));
+                setFavorites(prev => prev.filter(p => p.id !== productId));
             }
             setError(null);
 
@@ -110,7 +110,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
 
     // Checa se o produto está na lista atual
     const isFavorite = (productId: number) => {
-        return favorites.some(fav => fav.id === productId);
+        return favorites?.some(fav => fav.id === productId) ?? false;
     };
 
     return (

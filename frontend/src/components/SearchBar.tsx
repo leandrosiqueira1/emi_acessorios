@@ -21,6 +21,8 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
       <div className="relative w-full">
         <input
           type="text"
+          id="searchQuery"
+          name="q"
           value={query}
           onChange={handleChange}
           placeholder="🔍 Buscar acessórios..."

@@ -21,14 +21,23 @@ const { toggleFavorite, isFavorite } = useFavorites();
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
 const handleAddToCart = () => {
-addToCart(product);
+	addToCart({
+		id: product.id,
+		name: product.name,
+		price: product.price,
+		image_url: product.image_url ? `${BACKEND}${product.image_url}` : "https://placehold.co/400x400/e2e8f0/64748b?text=Sem+Imagem",
+		weight_kg: product.weight_kg ?? 0,
+		length_cm: product.length_cm ?? 0,
+		height_cm: product.height_cm ?? 0,
+		width_cm: product.width_cm ?? 0,
+	});
 };
 
 return (
 <div className="relative bg-white shadow-xl rounded-2xl overflow-hidden group hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
 <div className="absolute top-2 right-2 z-10">
 <button
-onClick={() => toggleFavorite(product)}
+onClick={() => toggleFavorite(product.id)}
 className="p-2 rounded-full bg-white bg-opacity-80 text-gray-500 hover:text-red-500 transition-colors duration-300"
 >
 <Heart 

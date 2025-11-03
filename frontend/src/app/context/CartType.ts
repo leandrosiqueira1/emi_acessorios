@@ -2,7 +2,15 @@
 
 import { Product } from "../types/products";
 
-export type CartItem = Product & { quantity: number };
+// CartItem representa o produto armazenado no carrinho. Removemos campos
+// desnecessários e adicionamos os campos de dimensão/peso que o carrinho usa.
+export type CartItem = Omit<Product, "is_featured" | "category"> & {
+  quantity: number;
+  weight_kg: number;
+  length_cm: number;
+  height_cm: number;
+  width_cm: number;
+};
 
 export type CartState = { cart: CartItem[] };
 

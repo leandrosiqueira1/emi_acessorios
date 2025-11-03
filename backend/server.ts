@@ -47,7 +47,7 @@ app.use(
 
 app.use(rateLimit({ windowMs: 60 * 1000, max: 200 }));
 
-// ✅ Correção: CORS configurado corretamente
+// Configura CORS globalmente — o middleware lida com preflight (OPTIONS)
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
