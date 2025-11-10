@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import ShippingCalculator from "@/components/ShippingCalculator";
+import FreteEstimate from "@/components/FreteEstimate";
 import { useCart } from "@/app/context/CartContext";
 
 type Product = {
@@ -9,6 +10,8 @@ type Product = {
   price: number | string;
   image_url?: string | null;
   description?: string | null;
+  sku?: string;
+  pack?: string; // e.g. "5und"
   // dimensões e peso (opcionais, podem vir do backend)
   weight_kg?: number;
   length_cm?: number;
@@ -18,6 +21,7 @@ type Product = {
 
 export default function ProductDetailsClient({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
+  const [showPayments, setShowPayments] = useState(false);
   const { addToCart } = useCart();
 
   const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
@@ -46,6 +50,39 @@ export default function ProductDetailsClient({ product }: { product: Product }) 
     <div className="bg-white p-6 rounded-2xl shadow">
       <h2 className="text-2xl font-extrabold mb-2 text-gray-900">{product.name}</h2>
       <p className="text-[#9061FA] text-4xl font-extrabold mb-4">R$ {Number(product.price).toFixed(2)}</p>
+
+      {/* SKU / embalagem */}
+      <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+        {product.sku && <span>SKU: <span className="font-medium text-gray-800">{product.sku}</span></span>}
+        {product.pack && <span>{product.pack}</span>}
+      </div>
+
+      {/* Estimativa de frete automática usando um CEP padrão (pode ser configurado via env) */}
+      <div className="mb-4">
+        <FreteEstimate productId={product.id} weightKg={product.weight_kg} quantity={quantity} subtotal={Number(product.price) * quantity} />
+      </div>
+
+      {/* Desconto para PIX e meios de pagamento */}
+      <div className="mb-4">
+        <p className="text-sm text-green-600 font-medium">5% de desconto pagando com Pix</p>
+        <button
+          onClick={() => setShowPayments((s) => !s)}
+          className="mt-2 text-sm text-blue-600 hover:underline"
+          aria-expanded={showPayments}
+        >
+          Ver meios de pagamento
+        </button>
+
+        {showPayments && (
+          <div className="mt-2 p-3 bg-gray-50 border rounded">
+            <ul className="text-sm text-gray-700 space-y-1">
+              <li>Pix — 5% de desconto</li>
+              <li>Cartão de crédito — em até 6x</li>
+              <li>Boleto — pagamento à vista</li>
+            </ul>
+          </div>
+        )}
+      </div>
 
       <div className="flex items-center gap-3 mb-4">
         <label htmlFor="quantity" className="text-sm">Quantidade:</label>
