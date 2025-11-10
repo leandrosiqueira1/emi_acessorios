@@ -55,8 +55,8 @@ export default async function ProductPage(props: any) {
                                     </div>
 
                         <div className="mt-6">
-                            <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
-                            <p className="text-pink-600 text-xl font-extrabold mt-2">R$ {Number(product.price).toFixed(2)}</p>
+                            <h1 className="text-2xl font-extrabold text-gray-900">{product.name}</h1>
+                            <p className="text-[#9061FA] text-4xl font-extrabold mt-2">R$ {Number(product.price).toFixed(2)}</p>
                             <p className="text-gray-600 mt-4">{product.description}</p>
                         </div>
                     </div>

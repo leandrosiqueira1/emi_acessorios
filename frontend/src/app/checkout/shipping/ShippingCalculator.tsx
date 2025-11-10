@@ -28,6 +28,8 @@ export default function ProductShippingCalculator({
   const [options, setOptions] = useState<ShippingOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debugLog, setDebugLog] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const formatCep = (value: string) => {
     const digits = value.replace(/\D/g, '').slice(0, 8);
@@ -56,7 +58,9 @@ export default function ProductShippingCalculator({
         totalWidthCm: totalWidthCm || 15,
       };
 
-      console.log('📨 Enviando para backend:', body);
+      // Debug: mostrar body enviado e status
+      setDebugLog(`[DEBUG] /shipping/calculate - Body recebido: ${JSON.stringify(body, null, 2)}`);
+      setStatusMessage('📡 Consultando API Correios...');
 
       const res = await fetch(`${BACKEND}/shipping/calculate`, {
         method: 'POST',
@@ -65,8 +69,6 @@ export default function ProductShippingCalculator({
       });
 
       const text = await res.text(); // <-- lê o corpo cru
-      console.log('📩 Resposta bruta:', text);
-
       let data;
       try {
         data = JSON.parse(text);
@@ -76,6 +78,8 @@ export default function ProductShippingCalculator({
 
       if (!res.ok) throw new Error(data.error || 'Erro ao calcular frete');
       setOptions(Array.isArray(data) ? data : [data]);
+      setStatusMessage('✅ Fretes recebidos');
+      setDebugLog((prev) => prev + "\n\nResposta do servidor:\n" + JSON.stringify(data, null, 2));
     } catch (err: any) {
       console.error('Erro ao calcular frete:', err);
       setError(err.message || 'Erro de conexão com o servidor.');
@@ -110,6 +114,8 @@ export default function ProductShippingCalculator({
 
       {error && <p className="text-sm text-red-500 mb-2">{error}</p>}
 
+  {statusMessage && <p className="text-sm text-gray-600 mb-2">{statusMessage}</p>}
+
       {options.length > 0 && (
         <div className="space-y-2">
           {options.map((o, i) => (
@@ -131,6 +137,17 @@ export default function ProductShippingCalculator({
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {debugLog && (
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Debug:</label>
+          <textarea
+            readOnly
+            value={debugLog}
+            className="w-full h-40 p-2 border rounded bg-gray-50 font-mono text-sm whitespace-pre overflow-auto"
+          />
         </div>
       )}
     </div>

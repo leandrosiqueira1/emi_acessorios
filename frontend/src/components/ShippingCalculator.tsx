@@ -26,6 +26,8 @@ export default function ProductShippingCalculator({
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debugLog, setDebugLog] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const currentSubtotal = productPrice * quantity;
 
@@ -52,20 +54,26 @@ export default function ProductShippingCalculator({
 
     try {
       // ✅ Envia no formato que o backend espera (destinationCep, subtotal, items)
+      const body = {
+        destinationCep: cep,
+        subtotal: currentSubtotal,
+        // items com peso/quantidade ajudam o backend a calcular peso total, se disponível
+        items: [
+          {
+            weight_kg: 0.5,
+            quantity: quantity,
+          },
+        ],
+      };
+
+      // Exibe debug com o body enviado e uma mensagem de consulta aos Correios
+      setDebugLog(`[DEBUG] /shipping/calculate - Body recebido: ${JSON.stringify(body, null, 2)}`);
+      setStatusMessage('📡 Consultando API Correios...');
+
       const res = await fetch(`${BACKEND}/shipping/calculate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          destinationCep: cep,
-          subtotal: currentSubtotal,
-          // items com peso/quantidade ajudam o backend a calcular peso total, se disponível
-          items: [
-            {
-              weight_kg: 0.5,
-              quantity: quantity,
-            },
-          ],
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -75,6 +83,8 @@ export default function ProductShippingCalculator({
 
       const data = await res.json();
       setShippingOptions(data);
+      setStatusMessage('✅ Fretes recebidos');
+      setDebugLog((prev) => prev + "\n\nResposta do servidor:\n" + JSON.stringify(data, null, 2));
     } catch (err: any) {
       console.error('Erro ao calcular frete:', err);
       setError(err.message || 'Erro de conexão com o servidor de frete.');
@@ -120,6 +130,11 @@ export default function ProductShippingCalculator({
         <p className="text-red-500 text-sm mt-2 font-medium">{error}</p>
       )}
 
+      {/* Mensagem de status (ex.: consultando API Correios) */}
+      {statusMessage && (
+        <p className="text-sm text-gray-600 mt-2">{statusMessage}</p>
+      )}
+
       {shippingOptions.length > 0 && (
         <div className="pt-2 space-y-2">
           <p className="text-sm font-semibold text-gray-700">
@@ -163,6 +178,18 @@ export default function ProductShippingCalculator({
           <textarea
             readOnly
             value={JSON.stringify(shippingOptions, null, 2)}
+            className="w-full h-40 p-2 border rounded bg-gray-50 font-mono text-sm whitespace-pre overflow-auto"
+          />
+        </div>
+      )}
+
+      {/* Caixa de debug do request/response */}
+      {debugLog && (
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Debug:</label>
+          <textarea
+            readOnly
+            value={debugLog}
             className="w-full h-40 p-2 border rounded bg-gray-50 font-mono text-sm whitespace-pre overflow-auto"
           />
         </div>
