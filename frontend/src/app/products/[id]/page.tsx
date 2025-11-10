@@ -5,6 +5,7 @@
 import React from 'react';
 import ShippingCalculator from '@/components/ShippingCalculator';
 import ProductImage from '@/components/ProductImage';
+import ProductGallery from '@/components/ProductGallery';
 
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
 const PLACEHOLDER_URL = 'https://placehold.co/600x600/e0e0e0/555555?text=Sem+Imagem';
@@ -45,28 +46,24 @@ export default async function ProductPage(props: any) {
             <div className="max-w-5xl mx-auto p-6 mt-90">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
                     <div className="col-span-2 bg-white rounded-2xl p-6 shadow">
-                                    <div className="w-full h-[560px] flex items-center justify-center overflow-hidden rounded-xl">
-                                        <ProductImage
-                                            src={imageSrc}
-                                            alt={product.name || 'Produto'}
-                                            className="w-full h-full object-contain"
-                                            placeholder={PLACEHOLDER_URL}
-                                        />
-                                    </div>
-
-                        <div className="mt-6">
-                            <h1 className="text-2xl font-extrabold text-gray-900">{product.name}</h1>
-                            <p className="text-[#9061FA] text-4xl font-extrabold mt-2">R$ {Number(product.price).toFixed(2)}</p>
-                            <p className="text-gray-600 mt-4">{product.description}</p>
-                        </div>
+                        {/* Gallery cliente: mostra imagem principal e miniaturas */}
+                        <ProductGallery images={product.images ? product.images.map((img: string) => img.startsWith('/') ? `${BACKEND}${img}` : img) : [imageSrc]} alt={product.name} />
                     </div>
 
                     <aside className="col-span-1">
                         {/* ShippingCalculator é um componente cliente */}
                         <ShippingCalculator productId={id} productPrice={Number(product.price)} quantity={1} />
                     </aside>
-                </div>
-            </div>
+                                </div>
+
+                                {/* Descrição do produto em largura completa abaixo */}
+                                {product.description && (
+                                    <div className="max-w-5xl mx-auto p-6 mt-6 bg-white rounded-2xl shadow">
+                                        <h3 className="text-xl font-semibold mb-3">Descrição do Produto</h3>
+                                        <p className="text-gray-700">{product.description}</p>
+                                    </div>
+                                )}
+                        </div>
         );
     } catch (err) {
         console.error('Erro ao carregar produto:', err);

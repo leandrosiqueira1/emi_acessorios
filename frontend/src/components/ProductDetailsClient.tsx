@@ -71,12 +71,7 @@ export default function ProductDetailsClient({ product }: { product: Product }) 
         <ShippingCalculator productId={product.id} productPrice={Number(product.price)} quantity={quantity} />
       </div>
 
-      {product.description && (
-        <div className="mt-4 text-gray-700">
-          <h3 className="font-semibold mb-2">Descrição</h3>
-          <p>{product.description}</p>
-        </div>
-      )}
+      {/* Descrição movida para a página do produto (server component) */}
     </div>
   );
 }
